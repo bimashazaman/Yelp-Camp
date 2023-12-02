@@ -1,6 +1,7 @@
 const express = require('express')
 const path = require('path')
 const mongoose = require('mongoose')
+const methodOverride = require('method-override')
 
 const Campground = require('./models/campground')
 
@@ -25,6 +26,12 @@ app.use('/css', express.static(__dirname + 'public/css'))
 app.use('/js', express.static(__dirname + 'public/js'))
 app.use('/img', express.static(__dirname + 'public/img'))
 
+//middleware
+app.use(express.urlencoded({ extended: true }))
+app.use(express.json())
+
+app.use(methodOverride('_method'))
+
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
@@ -41,12 +48,35 @@ app.get('/campgrounds/new', (req, res) => {
 app.post('/campgrounds', async (req, res) => {
   const campground = new Campground(req.body.campground)
   await campground.save()
+
   res.redirect(`/campgrounds/${campground._id}`)
 })
 
 app.get('/campgrounds/:id', async (req, res) => {
   const campground = await Campground.findById(req.params.id)
   res.render('campgrounds/show', { campground })
+})
+
+//edit
+app.get('/campgrounds/:id/edit', async (req, res) => {
+  const campground = await Campground.findById(req.params.id)
+  res.render('campgrounds/edit', { campground })
+})
+
+//update
+app.put('/campgrounds/:id', async (req, res) => {
+  const { id } = req.params
+  const campground = await Campground.findByIdAndUpdate(id, {
+    ...req.body.campground,
+  })
+  res.redirect(`/campgrounds/${req.params.id}`)
+})
+
+//delete
+app.delete('/campgrounds/:id', async (req, res) => {
+  const { id } = req.params
+  await Campground.findByIdAndDelete(id)
+  res.redirect('/campgrounds')
 })
 
 const port = 3000
