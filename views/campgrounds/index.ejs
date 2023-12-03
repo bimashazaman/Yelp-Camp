@@ -1,11 +1,18 @@
 <% layout('layouts/boilerplate') %>
 
-<h1>All Campgrounds</h1>
-<a href="/campgrounds/new">Add New Campground</a>
-<ul>
+<h1 class="display-4 text-center">All Campgrounds</h1>
+
+<div class="campground-grid">
   <% campgrounds.forEach(function(campground) { %>
-  <li>
-    <a href="/campgrounds/<%= campground._id %>"><%= campground.title %></a>
-  </li>
-  <% }) %>
-</ul>
+  <div class="campground-card">
+    <a href="/campgrounds/<%= campground._id %>">
+      <img src="<%= campground.image %>" alt="<%= campground.title %>" />
+      <div class="card-content">
+        <h2><%= campground.title %></h2>
+        <p><%= campground.description %></p>
+        <p class="price">Price: $<%= campground.price %></p>
+      </div>
+    </a>
+  </div>
+  <% }); %>
+</div>
