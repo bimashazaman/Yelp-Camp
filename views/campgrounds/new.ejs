@@ -1,32 +1,67 @@
 <% layout('layouts/boilerplate') %>
 
 <h1>Create a new campground</h1>
-<form action="/campgrounds" method="POST" class="campground-form">
+<form
+  action="/campgrounds"
+  method="POST"
+  class="campground-form needs-validation"
+  novalidate
+>
   <div class="form-group">
     <label for="title">Title</label>
-    <input type="text" name="campground[title]" id="title" required />
+    <input
+      type="text"
+      name="campground[title]"
+      id="title"
+      class="form-control"
+      required
+    />
+    <div class="invalid-feedback">Please provide a title.</div>
   </div>
   <div class="form-group">
     <label for="location">Location</label>
-    <input type="text" name="campground[location]" id="location" required />
+    <input
+      type="text"
+      name="campground[location]"
+      id="location"
+      class="form-control"
+      required
+    />
+    <div class="invalid-feedback">Please provide a location.</div>
   </div>
   <div class="form-group">
     <label for="price">Price</label>
-    <input type="number" name="campground[price]" id="price" required />
+    <input
+      type="number"
+      name="campground[price]"
+      id="price"
+      class="form-control"
+      required
+    />
+    <div class="invalid-feedback">Please provide a price.</div>
   </div>
   <div class="form-group">
     <label for="description">Description</label>
     <textarea
       name="campground[description]"
       id="description"
+      class="form-control"
       required
     ></textarea>
+    <div class="invalid-feedback">Please provide a description.</div>
   </div>
   <div class="form-group">
     <label for="image">Image URL</label>
-    <input type="url" name="campground[image]" id="image" required />
+    <input
+      type="url"
+      name="campground[image]"
+      id="image"
+      class="form-control"
+      required
+    />
+    <div class="invalid-feedback">Please provide a valid URL.</div>
   </div>
 
-  <button type="submit" class="submit-btn">Submit</button>
+  <button type="submit" class="submit-btn btn btn-primary">Submit</button>
 </form>
 <a href="/campgrounds" class="back-link">Back to Campgrounds</a>
