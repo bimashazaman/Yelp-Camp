@@ -25,4 +25,58 @@
       <button type="submit" class="button delete-btn">Delete Campground</button>
     </form>
   </div>
+  <hr />
+  <div class="review-form">
+    <h2>Leave a Review</h2>
+    <form
+      action="/campgrounds/<%= campground._id %>/reviews"
+      method="POST"
+      class="needs-validation"
+      novalidate
+    >
+      <div class="mb-3">
+        <label for="rating" class="form-label">Rating</label>
+        <input
+          type="range"
+          id="rating"
+          name="review[rating]"
+          min="1"
+          max="5"
+          required
+          class="form-range"
+        />
+        <div class="invalid-feedback">Please choose a rating.</div>
+      </div>
+
+      <div class="mb-3">
+        <label for="body" class="form-label">Review</label>
+        <textarea
+          id="body"
+          name="review[body]"
+          required
+          class="form-control review-textarea"
+        ></textarea>
+        <div class="invalid-feedback">Please enter a review.</div>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit Review</button>
+    </form>
+  </div>
+
+  <!-- reviews -->
+  <div class="reviews">
+    <% campground.reviews.forEach(function(review) { %>
+    <div class="review">
+      <div class="review-rating">
+        <span class="review-stars"><%= review.rating %> stars</span>
+      </div>
+      <p class="review-body"><%= review.body %></p>
+      <form
+        action="/campgrounds/<%= campground._id %>/reviews/<%= review._id %>?_method=DELETE"
+        method="POST"
+      >
+        <button type="submit" class="button delete-btn">Delete Review</button>
+      </form>
+    </div>
+    <% }); %>
+  </div>
 </div>
