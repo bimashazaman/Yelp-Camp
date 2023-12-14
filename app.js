@@ -4,9 +4,13 @@ const mongoose = require('mongoose')
 const methodOverride = require('method-override')
 const ejsMate = require('ejs-mate')
 const session = require('express-session')
+const passport = require('passport')
+const LocalStrategy = require('passport-local')
 
 const campgrounds = require('./routes/campgrounds')
 const reviews = require('./routes/reviews')
+const userRoutes = require('./routes/users')
+const User = require('./models/user')
 
 main().catch((err) => console.log(err))
 
@@ -17,7 +21,7 @@ async function main() {
 
 const app = express()
 
-//views
+// views
 app.engine('ejs', ejsMate)
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
@@ -33,19 +37,31 @@ const sessionConfig = {
     maxAge: Date.now() + 1000 * 60 * 60 * 24 * 7,
   },
 }
+
+// Session middleware
 app.use(session(sessionConfig))
 
-//middleware
+// Passport configuration
+passport.use(new LocalStrategy(User.authenticate()))
+
+passport.serializeUser(User.serializeUser())
+passport.deserializeUser(User.deserializeUser())
+
+// Initialize Passport and Passport session
+app.use(passport.initialize())
+app.use(passport.session())
+
+// Middleware
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
-
 app.use(methodOverride('_method'))
 
-//routes
+// Routes
 app.use('/campgrounds', campgrounds)
 app.use('/campgrounds/:id/reviews', reviews)
+app.use('/', userRoutes)
 
-//error handling
+// Error handling
 app.use((err, req, res, next) => {
   const { statusCode = 500, message = 'Something went wrong' } = err
   res.status(statusCode).send(message)
