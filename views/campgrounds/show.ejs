@@ -13,6 +13,8 @@
     <p><strong>Location:</strong> <%= campground.location %></p>
     <p class="campground-description"><%= campground.description %></p>
   </div>
+
+  <% if (currentUser && currentUser._id.equals(campground.author)) { %>
   <div class="campground-actions">
     <a href="/campgrounds" class="button back-link">Back to Campgrounds</a>
     <a href="/campgrounds/<%= campground._id %>/edit" class="button edit-link"
@@ -25,6 +27,7 @@
       <button type="submit" class="button delete-btn">Delete Campground</button>
     </form>
   </div>
+  <% } %>
   <hr />
   <div class="review-form">
     <h2>Leave a Review</h2>
@@ -70,12 +73,14 @@
         <span class="review-stars"><%= review.rating %> stars</span>
       </div>
       <p class="review-body"><%= review.body %></p>
+      <% if (currentUser && currentUser._id.equals(campground.author)) { %>
       <form
         action="/campgrounds/<%= campground._id %>/reviews/<%= review._id %>?_method=DELETE"
         method="POST"
       >
         <button type="submit" class="button delete-btn">Delete Review</button>
       </form>
+      <% } %>
     </div>
     <% }); %>
   </div>

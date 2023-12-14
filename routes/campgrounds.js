@@ -1,119 +1,41 @@
 const express = require('express')
 const router = express.Router()
 
+const campgroundsController = require('../controllers/campgroundsController')
+const { isLoggedIn, isAuthor, validateCampground } = require('../middleware')
 const catchAsync = require('../utils/catchAsync')
-const ExpressError = require('../utils/ExpressError')
 
-const { campgroundSchema } = require('../database/schemas/campgroundSchema')
-const { isLoggedIn } = require('../middleware')
+router
+  .route('/')
+  .get(isLoggedIn, catchAsync(campgroundsController.index))
+  .post(
+    isLoggedIn,
+    validateCampground,
+    catchAsync(campgroundsController.createCampground)
+  )
 
-const Campground = require('../models/campground')
+router.get('/new', isLoggedIn, campgroundsController.renderNewForm)
 
-const validateCampground = (req, res, next) => {
-  const { error } = campgroundSchema.validate(req.body)
-  if (error) {
-    const msg = error.details.map((el) => el.message).join(',')
-    throw new ExpressError(msg, 400)
-  } else {
-    next()
-  }
-}
+router
+  .route('/:id')
+  .get(isLoggedIn, catchAsync(campgroundsController.showCampground))
+  .put(
+    isLoggedIn,
+    isAuthor,
+    validateCampground,
+    catchAsync(campgroundsController.updateCampground)
+  )
+  .delete(
+    isLoggedIn,
+    isAuthor,
+    catchAsync(campgroundsController.deleteCampground)
+  )
 
-router.get(
-  '/',
-  isLoggedIn,
-  catchAsync(async (req, res) => {
-    const campgrounds = await Campground.find({})
-
-    if (!campgrounds) {
-      req.flash('error', 'Cannot find that campground!')
-      return res.redirect('/campgrounds')
-    }
-
-    res.render('campgrounds/index', { campgrounds })
-  })
-)
-
-router.get('/new', isLoggedIn, (req, res) => {
-  res.render('campgrounds/new')
-})
-
-router.post(
-  '/',
-  isLoggedIn,
-  validateCampground,
-  catchAsync(async (req, res) => {
-    if (!req.body.campground)
-      throw new ExpressError('Invalid Campground Data', 400)
-
-    const campground = new Campground(req.body.campground)
-    await campground.save()
-
-    res.redirect(`/campgrounds/${campground._id}`)
-  })
-)
-
-router.get(
-  '/:id',
-  isLoggedIn,
-  catchAsync(async (req, res) => {
-    const campground = await Campground.findById(req.params.id).populate(
-      'reviews'
-    )
-
-    if (!campground) {
-      req.flash('error', 'Cannot find that campground!')
-      return res.redirect('/campgrounds')
-    }
-
-    res.render('campgrounds/show', { campground })
-  })
-)
-
-//edit
 router.get(
   '/:id/edit',
   isLoggedIn,
-  catchAsync(async (req, res) => {
-    const campground = await Campground.findById(req.params.id)
-
-    if (!campground) {
-      req.flash('error', 'Cannot find that campground!')
-      return res.redirect('/campgrounds')
-    }
-
-    res.render('campgrounds/edit', { campground })
-  })
-)
-
-//update
-router.put(
-  '/:id',
-  isLoggedIn,
-  validateCampground,
-  catchAsync(async (req, res) => {
-    const { id } = req.params
-
-    if (!req.body.campground)
-      throw new ExpressError('Invalid Campground Data', 400)
-
-    const campground = await Campground.findByIdAndUpdate(id, {
-      ...req.body.campground,
-    })
-
-    res.redirect(`/campgrounds/${campground._id}`)
-  })
-)
-
-//delete
-router.delete(
-  '/:id',
-  isLoggedIn,
-  catchAsync(async (req, res) => {
-    const { id } = req.params
-    await Campground.findByIdAndDelete(id)
-    res.redirect('/campgrounds')
-  })
+  isAuthor,
+  catchAsync(campgroundsController.renderEditForm)
 )
 
 module.exports = router
