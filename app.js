@@ -6,6 +6,7 @@ const ejsMate = require('ejs-mate')
 const session = require('express-session')
 const passport = require('passport')
 const LocalStrategy = require('passport-local')
+const flash = require('connect-flash')
 
 const campgrounds = require('./routes/campgrounds')
 const reviews = require('./routes/reviews')
@@ -40,6 +41,8 @@ const sessionConfig = {
 
 // Session middleware
 app.use(session(sessionConfig))
+
+app.use(flash())
 
 // Passport configuration
 passport.use(new LocalStrategy(User.authenticate()))

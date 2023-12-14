@@ -1,6 +1,7 @@
 const express = require('express')
 const User = require('../models/user')
 const router = express.Router()
+const passport = require('passport')
 
 // Route to show registration form
 router.get('/signup', (req, res) => {
@@ -22,5 +23,20 @@ router.post('/register', async (req, res) => {
     res.redirect('signup')
   }
 })
+
+// Route to show login form
+router.get('/login', (req, res) => {
+  res.render('users/login')
+})
+
+// Route to handle login form submission
+router.post(
+  '/login',
+  passport.authenticate('local', {
+    failureRedirect: '/login',
+    successRedirect: '/campgrounds',
+    successFlash: 'Welcome back!',
+  })
+)
 
 module.exports = router
