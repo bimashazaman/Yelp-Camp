@@ -21,6 +21,7 @@ const validateCampground = (req, res, next) => {
 
 router.get(
   '/',
+  isLoggedIn,
   catchAsync(async (req, res) => {
     const campgrounds = await Campground.find({})
 
@@ -33,7 +34,7 @@ router.get(
   })
 )
 
-router.get('/new', (req, res) => {
+router.get('/new', isLoggedIn, (req, res) => {
   res.render('campgrounds/new')
 })
 
@@ -54,6 +55,7 @@ router.post(
 
 router.get(
   '/:id',
+  isLoggedIn,
   catchAsync(async (req, res) => {
     const campground = await Campground.findById(req.params.id).populate(
       'reviews'

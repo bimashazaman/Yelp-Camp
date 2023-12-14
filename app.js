@@ -59,6 +59,14 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(methodOverride('_method'))
 
+// Middleware to add user info to all templates
+app.use((req, res, next) => {
+  res.locals.currentUser = req.user
+  res.locals.success = req.flash('success')
+  res.locals.error = req.flash('error')
+  next()
+})
+
 // Routes
 app.use('/campgrounds', campgrounds)
 app.use('/campgrounds/:id/reviews', reviews)
