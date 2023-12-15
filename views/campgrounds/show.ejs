@@ -70,7 +70,13 @@
     <% campground.reviews.forEach(function(review) { %>
     <div class="review">
       <div class="review-rating">
-        <span class="review-stars"><%= review.rating %> stars</span>
+        <% for(let i = 0; i < review.rating; i++) { %>
+        <span class="star">&#9733;</span>
+        <!-- This is a star character -->
+        <% } %> <% for(let i = review.rating; i < 5; i++) { %>
+        <span class="star">&#9734;</span>
+        <!-- This is an empty star character -->
+        <% } %>
       </div>
       <p class="review-body"><%= review.body %></p>
       <% if (currentUser && currentUser._id.equals(campground.author)) { %>
