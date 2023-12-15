@@ -2,10 +2,20 @@ const express = require('express')
 const User = require('../models/user')
 const router = express.Router()
 const passport = require('passport')
+const Campground = require('../models/campground')
 
 // Route to show registration form
 router.get('/signup', (req, res) => {
   res.render('users/register')
+})
+
+router.get('/', async (req, res) => {
+  const campgrounds = await Campground.find({})
+  if (!campgrounds) {
+    req.flash('error', 'Cannot find campgrounds!')
+    return res.redirect('/campgrounds')
+  }
+  res.render('campgrounds/index', { campgrounds })
 })
 
 // Route to handle registration form submission
